@@ -2,20 +2,14 @@ import java.time.LocalDate
 import java.time.DayOfWeek
 import java.time.format.DateTimeFormatter
 
+// Add a next() method
+LocalDate.metaClass.next = { delegate.plusDays(1) }
+
 def createDirectoryIfNotExists(dir) {
     def folder = new File(dir)
     if (!folder.exists())
         folder.mkdirs()
 }
-
-createDirectoryIfNotExists('conf')
-createDirectoryIfNotExists('data')
-
-// Add a next() method
-LocalDate.metaClass.next = { delegate.plusDays(1) }
-
-fromDate = LocalDate.now()
-toDate = LocalDate.now()
 
 def parseToDateIfValid(String arg) {
     LocalDate.parse(arg)
@@ -29,10 +23,6 @@ def verifyArgs(args) {
     fromDate = parseToDateIfValid(args[0] as String)
 }
 
-if (args.size() > 0) {
-    verifyArgs(args)
-}
-
 def f(date) {
     date.format(DateTimeFormatter.BASIC_ISO_DATE)
 }
@@ -43,6 +33,17 @@ def getDirectoryName(paper) {
 
 def getFileName(paper, date) {
     "${f(date)}_${paper}_tradedump.txt"
+}
+
+
+createDirectoryIfNotExists('conf')
+createDirectoryIfNotExists('data')
+
+fromDate = LocalDate.now()
+toDate = LocalDate.now()
+
+if (args.size() > 0) {
+    verifyArgs(args)
 }
 
 config = new File('conf/stocks_to_persist.txt').getText('UTF-8')
