@@ -55,9 +55,13 @@ config.eachLine { paper ->
         if(date.getDayOfWeek().getValue() < 6) {            
             println "Processing [ Paper: ${paper}, Type: tradedump, Date: ${date}, Week day: ${date.getDayOfWeek()} ]"
             def filePath = getDirectoryName(paper) + '/' + getFileName(paper, date)
-            if (!new File(filePath).exists()) {
+            def fileToWriteTo = new File(filePath) 
+            if (!fileToWriteTo.exists() || fileToWriteTo.length() < 100 || date == LocalDate.now()) {
                 def content = "http://www.netfonds.no/quotes/posdump.php?date=${f(date)}&paper=${paper}&csv_format=csv".toURL().text
-                new File(filePath).write(content)
+                if(content.length() > 100) {
+                    println "Saved data to: filePath"
+                    new File(filePath).write(content)
+                }                    
             } else
                 println "File ${filePath} already exists. Skipping!"
         } 
