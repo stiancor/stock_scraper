@@ -16,9 +16,19 @@ def parseToDateIfValid(String arg) {
 }
 
 def verifyArgs(args) {
-    if (args.size() > 2) throw new IllegalArgumentException('There cannot be more than two arguments')
-    if (args.size() == 2) {
+    if (args.size() > 3) throw new IllegalArgumentException('There cannot be more than two arguments')
+    if (args.size() == 3) {
+        if(args[2] == 'force') {
+            force = true
+        }
         toDate = parseToDateIfValid(args[1] as String)
+    }
+    if (args.size() == 2) {
+        if(args[1]==~ /\d+-\d+-\d+/) {
+            toDate = parseToDateIfValid(args[1] as String)    
+        } else if (args[1] == 'force') {
+            force = true
+        }
     }
     fromDate = parseToDateIfValid(args[0] as String)
 }
@@ -41,6 +51,7 @@ createDirectoryIfNotExists('data')
 
 fromDate = LocalDate.now()
 toDate = LocalDate.now()
+force = false
 
 if (args.size() > 0) {
     verifyArgs(args)
@@ -56,7 +67,7 @@ config.eachLine { paper ->
             println "Processing [ Paper: ${paper}, Type: tradedump, Date: ${date}, Week day: ${date.getDayOfWeek()} ]"
             def filePath = getDirectoryName(paper) + '/' + getFileName(paper, date)
             def fileToWriteTo = new File(filePath) 
-            if (!fileToWriteTo.exists() || fileToWriteTo.length() < 100 || date == LocalDate.now()) {
+            if (force || !fileToWriteTo.exists() || fileToWriteTo.length() < 100 || date == LocalDate.now()) {
                 def content = "http://www.netfonds.no/quotes/posdump.php?date=${f(date)}&paper=${paper}&csv_format=csv".toURL().text
                 if(content.length() > 100) {
                     println "Saved data to: filePath"
