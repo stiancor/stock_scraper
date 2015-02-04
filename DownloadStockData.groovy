@@ -70,7 +70,7 @@ config.eachLine { paper ->
             if (force || !fileToWriteTo.exists() || fileToWriteTo.length() < 100 || date == LocalDate.now()) {
                 def content = "http://www.netfonds.no/quotes/posdump.php?date=${f(date)}&paper=${paper}&csv_format=csv".toURL().text
                 if(content.length() > 100) {
-                    println "Saved data to: filePath"
+                    println "Saved data to: $filePath"
                     new File(filePath).write(content)
                 }                    
             } else
